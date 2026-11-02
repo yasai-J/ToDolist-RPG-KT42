@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#dce9bd">
+  <meta name="description" content="A personal retro RPG-style task planner that works offline.">
+  <title>RETRO LIFE QUEST</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div>
+      <div class="brand">RETRO LIFE QUEST</div>
+      <div class="brand-sub">A LITTLE ADVENTURE, EVERY DAY</div>
+    </div>
+    <div class="top-stats"><span>◆</span> <b id="gemTotal">0</b><small>GEMS</small></div>
+  </header>
+
+  <section class="hero panel">
+    <div class="hero-copy">
+      <div class="eyebrow">PLAYER STATUS</div>
+      <h1 id="greeting">冒険の時間だ！</h1>
+      <p>小さなクエストを重ねて、<br>自分だけの冒険を育てよう。</p>
+      <div class="hero-badges">
+        <span>LV. <b id="levelValue">1</b></span>
+        <span><b id="xpValue">0</b> EXP</span>
+      </div>
+      <div class="xp-area">
+        <div class="xp-label"><span>NEXT LEVEL</span><span id="xpProgressLabel">0 / 100</span></div>
+        <div class="bar"><div id="xpBar" class="bar-fill"></div></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="sun-moon" id="celestial">☀</div>
+      <div class="pixel-avatar" aria-label="冒険者">
+        <span class="hair"></span><span class="face"></span><span class="body"></span>
+        <span class="scarf"></span><span class="leg left"></span><span class="leg right"></span>
+      </div>
+      <div class="avatar-name">MINT</div>
+    </div>
+  </section>
+
+  <nav class="main-nav" aria-label="メインメニュー">
+    <button class="nav-btn active" data-view="today"><span>▣</span><b>TODAY</b><small>今日の冒険</small></button>
+    <button class="nav-btn" data-view="planner"><span>▦</span><b>PLANNER</b><small>予定と期限</small></button>
+    <button class="nav-btn" data-view="wonder"><span>✧</span><b>WONDER</b><small>いつかの夢</small></button>
+    <button class="nav-btn" data-view="chronicle"><span>▤</span><b>CHRONICLE</b><small>冒険の記録</small></button>
+    <button class="nav-btn" data-view="player"><span>♟</span><b>PLAYER</b><small>キャラクター</small></button>
+    <button class="nav-btn" data-view="collection"><span>◇</span><b>COLLECTION</b><small>アイテム</small></button>
+  </nav>
+
+  <main>
+    <section id="view-today" class="view">
+      <div class="section-heading"><div><div class="eyebrow">YOUR DAILY ADVENTURE</div><h2>TODAY'S QUEST</h2></div><div class="date-chip" id="todayDate"></div></div>
+      <div class="daily-summary panel inset">
+        <div class="summary-line"><b>今日の達成度</b><strong id="todayPercent">0%</strong></div>
+        <div class="bar"><div id="todayBar" class="bar-fill"></div></div>
+        <div class="summary-foot"><span id="todayCount">0 / 0 CLEAR</span><span id="todayExp">+0 EXP</span></div>
+      </div>
+      <div class="quest-group">
+        <div class="group-title"><span class="group-icon green">↻</span><div><b>DAILY QUEST</b><small>Every day · 毎日続けること</small></div></div>
+        <div id="todayDaily" class="task-list"></div>
+      </div>
+      <div class="quest-group">
+        <div class="group-title"><span class="group-icon amber">⌛</span><div><b>DEADLINE QUEST</b><small>Due dates · 期限のあるタスク</small></div></div>
+        <div id="todayDeadline" class="task-list"></div>
+      </div>
+      <div id="todayEmpty" class="empty-note hidden">今日のクエストはまだありません。<br>新しい冒険を登録してみよう。</div>
+      <div id="stageClear" class="stage-clear hidden">★ STAGE CLEAR! ★<small>今日のクエストをすべてクリア！</small></div>
+    </section>
+
+    <section id="view-planner" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">PLAN YOUR QUESTS</div><h2>PLANNER</h2></div></div>
+      <div class="panel inset">
+        <h3>NEW QUEST</h3>
+        <form id="taskForm" class="stack-form">
+          <label>タスク名<input id="taskName" maxlength="70" placeholder="例：研究データを集計する" required></label>
+          <label>種類<select id="taskType"><option value="DAILY">DAILY · 毎日する</option><option value="DEADLINE">DEADLINE · 期限がある</option><option value="WONDER">WONDER · いつかやりたい</option></select></label>
+          <label id="dueWrap" class="hidden">期限日<input id="taskDue" type="date"></label>
+          <label id="repeatWrap">繰り返し<select id="taskRepeat"><option value="daily">毎日</option><option value="weekdays">平日のみ</option><option value="weekends">土日のみ</option></select></label>
+          <label>難易度<select id="taskDifficulty"><option value="10">EASY · 10 EXP</option><option value="20" selected>NORMAL · 20 EXP</option><option value="40">HARD · 40 EXP</option><option value="100">PROJECT · 100 EXP</option></select></label>
+          <button class="primary-btn" type="submit">SAVE QUEST</button>
+        </form>
+        <p class="helper">WONDERは期限を設定せず、ここにストックします。TODAYには表示されません。</p>
+      </div>
+      <div class="panel inset list-panel">
+        <div class="section-heading small-heading"><h3>ACTIVE DEADLINES</h3><span class="muted">未完了の期限付きタスク</span></div>
+        <div id="deadlineList" class="task-list"></div>
+      </div>
+      <div class="panel inset list-panel">
+        <div class="section-heading small-heading"><h3>DAILY QUESTS</h3><span class="muted">毎日のルーティン</span></div>
+        <div id="dailyList" class="task-list"></div>
+      </div>
+    </section>
+
+    <section id="view-wonder" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">SOMEDAY, SOMEWHERE</div><h2>WONDER</h2><p class="section-desc">Someday ideas · いつかやってみたいこと</p></div></div>
+      <div class="wonder-intro panel inset">ここは、期限に追われず「いつかやりたい」を自由にしまっておく場所。達成率や締切はありません。</div>
+      <div id="wonderList" class="task-list panel inset"></div>
+    </section>
+
+    <section id="view-chronicle" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">YOUR JOURNEY</div><h2>CHRONICLE</h2><p class="section-desc">Weekly & monthly records · 週間・月間の達成記録</p></div></div>
+      <div class="period-switch"><button class="period-btn active" data-period="week">WEEK</button><button class="period-btn" data-period="month">MONTH</button></div>
+      <div class="panel inset">
+        <div class="summary-line"><b id="periodTitle">THIS WEEK'S PROGRESS</b><strong id="periodPercent">0%</strong></div>
+        <div class="bar"><div id="periodBar" class="bar-fill"></div></div>
+        <div class="summary-foot"><span id="periodCount">0 / 0 CLEAR</span><span id="periodExp">+0 EXP</span></div>
+        <div id="periodChart" class="period-chart"></div>
+        <div class="stats-grid">
+          <div class="mini-stat"><small>QUEST CLEAR</small><b id="periodClear">0</b></div>
+          <div class="mini-stat"><small>EXP GAINED</small><b id="periodTotalExp">0</b></div>
+        </div>
+      </div>
+      <p class="helper">DAILYはその日に予定されていた分、DEADLINEは期間内に期限が来た分を集計します。WONDERは達成率の対象外です。</p>
+    </section>
+
+    <section id="view-player" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">GROW WITH EVERY QUEST</div><h2>PLAYER</h2><p class="section-desc">Character growth · キャラクター育成</p></div></div>
+      <div class="panel player-card">
+        <div class="pixel-avatar large"><span class="hair"></span><span class="face"></span><span class="body"></span><span class="scarf"></span><span class="leg left"></span><span class="leg right"></span></div>
+        <div><div class="eyebrow">YOUR ADVENTURER</div><h2>MINT</h2><div class="player-level" id="playerLevel">LEVEL 1</div><p id="playerMessage">冒険は始まったばかり！</p></div>
+      </div>
+      <div class="stats-grid">
+        <div class="mini-stat"><small>TOTAL EXP</small><b id="playerExp">0</b></div>
+        <div class="mini-stat"><small>QUEST CLEAR</small><b id="playerClear">0</b></div>
+        <div class="mini-stat"><small>GEMS</small><b id="playerGems">0</b></div>
+        <div class="mini-stat"><small>LEVEL</small><b id="playerLevelNum">1</b></div>
+      </div>
+    </section>
+
+    <section id="view-collection" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">TREASURES YOU FOUND</div><h2>COLLECTION</h2><p class="section-desc">Items & treasures · アイテム収集</p></div></div>
+      <div class="item-grid">
+        <div class="item-card"><span>💎</span><b>GREEN GEM</b><small>クエストで見つかる宝石</small><strong id="itemGems">0</strong></div>
+        <div class="item-card"><span>🧪</span><b>HERB POTION</b><small>レベルアップの記念品</small><strong id="itemPotions">0</strong></div>
+        <div class="item-card"><span>🗝️</span><b>OLD KEY</b><small>これからの冒険で使う鍵</small><strong id="itemKeys">0</strong></div>
+        <div class="item-card"><span>📜</span><b>ADVENTURE NOTE</b><small>冒険の記録</small><strong id="itemNotes">0</strong></div>
+      </div>
+    </section>
+
+    <section id="view-settings" class="view hidden">
+      <div class="section-heading"><div><div class="eyebrow">MAKE IT YOURS</div><h2>SETTINGS</h2></div></div>
+      <div class="panel inset">
+        <h3>DISPLAY MODE</h3>
+        <p class="helper">AUTOは端末の現地時刻で昼夜を切り替えます。</p>
+        <div class="period-switch theme-switch">
+          <button class="theme-btn active" data-theme="auto">AUTO</button><button class="theme-btn" data-theme="day">DAY</button><button class="theme-btn" data-theme="night">NIGHT</button>
+        </div>
+        <div class="settings-line"><span>夜に切り替える時刻</span><input id="nightTime" type="time" value="18:00"></div>
+        <div class="settings-line"><span>朝に戻す時刻</span><input id="dayTime" type="time" value="7:00"></div>
+        <div class="settings-line"><span>期限タスクの自動表示</span><select id="leadDays"><option value="1">期限1日前から</option><option value="3" selected>期限3日前から</option><option value="7">期限7日前から</option><option value="14">期限14日前から</option></select></div>
+        <button id="saveSettings" class="primary-btn">SAVE SETTINGS</button>
+      </div>
+      <div class="panel inset">
+        <h3>BACKUP & RESTORE</h3>
+        <p class="helper">タスク・履歴・キャラクター情報をJSONファイルに保存、または復元できます。</p>
+        <div class="button-row"><button id="exportBtn" class="secondary-btn">EXPORT JSON</button><label class="secondary-btn file-label">IMPORT JSON<input id="importFile" type="file" accept="application/json,.json" hidden></label></div>
+        <p class="helper warning-text">端末のブラウザデータを消去すると保存内容も消える場合があります。定期的にバックアップしてください。</p>
+      </div>
+      <div class="panel inset">
+        <h3>DATA</h3>
+        <p class="helper">このアプリはタスク情報を外部サーバーへ送信しません。GitHub Pagesにはアプリのファイルだけを置きます。</p>
+        <button id="resetData" class="danger-btn">すべてのデータをリセット</button>
+      </div>
+    </section>
+  </main>
+
+  <footer><button id="settingsOpen" class="settings-link">⚙ SETTINGS</button><span>LOCAL SAVE · OFFLINE READY</span></footer>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="modal" class="modal hidden"><div class="modal-box"><div id="modalContent"></div><button id="modalClose" class="primary-btn">OK</button></div></div>
+<script src="./app.js"></script>
+</body>
+</html>
